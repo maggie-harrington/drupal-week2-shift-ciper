@@ -8,7 +8,14 @@ function shift_cipher_menu() {
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
-  
+
+  $items['shift_cipher_success_page'] = array(
+    'title' => 'Encryption complete!',
+    'page callback' => 'shift_cipher_success',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
   return $items;
 }
 
@@ -39,10 +46,23 @@ function shift_cipher_form() {
   return $form;
 }
 
-function shift_cipher_form_submit() {
+function shift_cipher_form_submit($form, &$form_state) {
+  $shift_value = $form_state['values']['shift_value'];
+  $direction = $form_state['values']['direction'];
+  $phrase = $form_state['values']['phrase'];
 
+  //calculate output here
+  $output = 'testing';
+
+  $_SESSION['shift_cipher'] = $output;
+  $form_state['redirect'] = 'shift_cipher_success_page';
 }
 
 function shift_cipher_success() {
+  $output = $_SESSION['shift_cipher'];
 
+  return "
+  <h3>Your encrypted phrase is: </h3><br>
+  <p>$output</p>
+  ";
 }
