@@ -80,19 +80,47 @@ function phrase_element_validate($element) {
 }
 
 function shift_cipher_form_submit($form, &$form_state) {
-  $shift_value = $form_state['values']['shift_value'];
+  $shift_value = intval($form_state['values']['shift_value']);
   $direction = $form_state['values']['direction'];
-  $phrase = $form_state['values']['phrase'];
+  $phrase = strtolower($form_state['values']['phrase']);
 
-  //calculate output here
-  $output = 'testing';
+  $alphabet_array = str_split('abcdefghijklmnopqrstuvwxyz');
 
-  $_SESSION['shift_cipher'] = $output;
+  $phrase_word_array = explode(' ', $phrase); //creates array of single word strings
+  $cipher_word_array = array();
+
+  foreach ($phrase_word_array as $word) {
+    $phrase_character_array = str_split($word); //creates array of single character strings
+    $cipher_character_array = array();
+
+    foreach ($phrase_character_array as $character) {
+      //compare $phrase_character_array to $alphabet_array
+      if (!in_array($character, $alphabet_array)) {
+        array_push($cipher_character_array, $character);
+      } else {
+        $position = array_search($character, $alphabet_array);
+
+        if ($direction == 'right') {
+          $position_new = intval($position) + $shift_value;
+        } else {
+          $position_new = intval($position) - $shift_value;
+        }
+
+        $cipher_character = $alphabet_array[$position_new];
+        array_push($cipher_character_array, $cipher_character);
+      }
+    }
+    $cipher_word = implode('', $cipher_character_array);
+    array_push($cipher_word_array, $cipher_word);
+  }
+  $cipher_phrase = implode(' ', $cipher_word_array);
+
+  $_SESSION['cipher_phrase'] = $cipher_phrase;
   $form_state['redirect'] = 'shift_cipher_success_page';
 }
 
 function shift_cipher_success() {
-  $output = $_SESSION['shift_cipher'];
+  $output = $_SESSION['cipher_phrase'];
 
   return "
   <h3>Your encrypted phrase is: </h3><br>
