@@ -24,18 +24,30 @@ function shift_cipher_form() {
     '#title' => 'Shift Value',
     '#type' => 'textfield',
     '#description' => t('Enter a shift value. Positive integers only.'),
+    '#required' => TRUE,
+    '#element_validate' => array(
+      'element_validate_integer_positive',
+    ),
   );
 
   $form['direction'] = array(
     '#title' => 'Direction',
     '#type' => 'textfield',
     '#description' => t('Enter a direction, "left" or "right" only.'),
+    '#required' => TRUE,
+    '#element_validate' => array(
+      'direction_element_validate',
+    ),
   );
 
   $form['phrase'] = array(
     '#title' => 'Phrase',
     '#type' => 'textfield',
     '#description' => t('Enter a phrase to be encrypted. Besides words, you may use only spaces and punctuation.'),
+    '#required' => TRUE,
+    '#element_validate' => array(
+      'phrase_element_validate',
+    ),
   );
 
   $form['submit'] = array(
@@ -44,6 +56,27 @@ function shift_cipher_form() {
   );
 
   return $form;
+}
+
+function direction_element_validate($element) {
+  if ($element['#value'] != 'left' && $element['#value'] != 'right') {
+    form_error($element, t('The only directions allowed are "left" and "right".'));
+  }
+}
+
+function phrase_element_validate($element) {
+  $allowed_characters = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .?!,;:-()[]{}\'"');
+  $characters_to_check = str_split($element['#value']);
+
+  foreach ($characters_to_check as $characters) {
+    if (!in_array($characters, $allowed_characters)) {
+      form_error($element, t('Your phrase may only contain words, spaces, and punctuation.'));
+    }
+  }
+
+  // if (preg_match('/^[a-zA-Z\040\.\?\!\,\;\:\-\(\)\{\}\'\"\[\]]+$/i', $element['#value'])) {
+  //   form_error($element, t('Your phrase may only contain words, spaces, and punctuation.'));
+  // }
 }
 
 function shift_cipher_form_submit($form, &$form_state) {
