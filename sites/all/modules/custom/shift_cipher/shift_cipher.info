@@ -1,0 +1,5 @@
+name = Shift Cipher
+description = Encrypts user input using a shift cipher and displays encrypted text.
+package = Maggie's Custom Modules
+core = 7.x
+files[] = shift_cipher.module
