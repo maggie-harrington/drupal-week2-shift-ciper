@@ -65,18 +65,9 @@ function direction_element_validate($element) {
 }
 
 function phrase_element_validate($element) {
-  $allowed_characters = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .?!,;:-()[]{}\'"');
-  $characters_to_check = str_split($element['#value']);
-
-  foreach ($characters_to_check as $characters) {
-    if (!in_array($characters, $allowed_characters)) {
-      form_error($element, t('Your phrase may only contain words, spaces, and punctuation.'));
-    }
+  if (!(preg_match('/^[a-zA-Z\040\.\?\!\,\;\:\-\(\)\{\}\'\"\[\]]+$/i', $element['#value']))) {
+    form_error($element, t('Your phrase may only contain words, spaces, and punctuation.'));
   }
-
-  // if (preg_match('/^[a-zA-Z\040\.\?\!\,\;\:\-\(\)\{\}\'\"\[\]]+$/i', $element['#value'])) {
-  //   form_error($element, t('Your phrase may only contain words, spaces, and punctuation.'));
-  // }
 }
 
 function shift_cipher_form_submit($form, &$form_state) {
