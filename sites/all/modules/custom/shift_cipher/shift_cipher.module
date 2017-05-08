@@ -77,6 +77,10 @@ function shift_cipher_form_submit($form, &$form_state) {
 
   $alphabet_array = str_split('abcdefghijklmnopqrstuvwxyz');
 
+  if ($shift_value >= 26) {
+    $shift_value = $shift_value % 26; //allows for shift value of any positive integer
+  }
+
   $phrase_word_array = explode(' ', $phrase); //creates array of single word strings
   $cipher_word_array = array();
 
@@ -92,9 +96,19 @@ function shift_cipher_form_submit($form, &$form_state) {
         $position = array_search($character, $alphabet_array);
 
         if ($direction == 'right') {
-          $position_new = intval($position) + $shift_value;
+          if (intval($position) + $shift_value >= 26) {
+            //allows for shift past the end of $alphabet_array
+            $position_new = intval($position) + $shift_value - 26;
+          } else {
+            $position_new = intval($position) + $shift_value;
+          }
         } else {
-          $position_new = intval($position) - $shift_value;
+          if (intval($position) - $shift_value < 0) {
+            //allows for shift past the beginning of $alphabet_array
+            $position_new = intval($position) - $shift_value + 26;
+          } else {
+            $position_new = intval($position) - $shift_value;
+          }
         }
 
         $cipher_character = $alphabet_array[$position_new];
